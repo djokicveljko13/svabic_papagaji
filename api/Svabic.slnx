@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Svabic.Api/Svabic.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Svabic.Api.Tests/Svabic.Api.Tests.csproj" />
+  </Folder>
+</Solution>

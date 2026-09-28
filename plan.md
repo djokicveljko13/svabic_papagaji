@@ -30,8 +30,9 @@ Faza 4 može da krene paralelno sa fazama 1–3 ako zatreba, ali podrazumevani r
 
 - [x] `git init`, grana `main`, `.gitignore` (bin/, obj/, node_modules/, .next/, .env*, *.user, secrets)
 - [x] `.editorconfig` (C# i TS stil), `README.md` (opis, stack, pokretanje)
-- [ ] GitHub repo (javan), zaštita `main` grane, GitHub Secrets (placeholder)
-- [ ] Supabase projekat (region Frankfurt). Zapisati connection string **poolera** (IPv4)
+- [x] GitHub repo (javan): `djokicveljko13/svabic_papagaji`
+- [ ] Zaštita `main` grane, GitHub Secrets (placeholder)
+- [x] Supabase projekat (region Frankfurt). Connection string **poolera** (IPv4) je u user-secrets, u Npgsql obliku `Host=...;Port=5432;Database=postgres;Username=...;Password=...;SSL Mode=Require` (URI oblik `postgresql://` Npgsql ne razume)
 - [ ] Proveriti najnoviju stabilnu verziju Next.js-a i .NET 10 SDK lokalno
 
 **Provera:** `git status` je čist, repo je na GitHub-u, Supabase connection string je zapisan van repoa.
@@ -40,15 +41,19 @@ Nalozi koji ne trebaju odmah otvaraju se u fazi u kojoj se koriste: Resend (faza
 
 ## Faza 1: API osnova (4 h)
 
-- [ ] `api/Svabic.sln`, `src/Svabic.Api` (webapi, Controllers), `tests/Svabic.Api.Tests` (xUnit)
-- [ ] `Nullable` i `TreatWarningsAsErrors` uključeni. Folderi prema CLAUDE.md
-- [ ] EF Core + Npgsql, `SvabicDbContext`, connection string iz user secrets
+- [x] `api/Svabic.slnx`, `src/Svabic.Api` (webapi, Controllers), `tests/Svabic.Api.Tests` (xUnit)
+- [x] `Nullable` i `TreatWarningsAsErrors` uključeni (`Directory.Build.props`). Swagger UI (Swashbuckle), CORS, `TimeProvider` u DI. Folderi prema CLAUDE.md se prave uz prve entitete
+- [x] EF Core + Npgsql, `SvabicDbContext`, connection string iz user secrets
 - [ ] Entiteti i konfiguracije (šema u Dodatku B), `TimeProvider` registrovan u DI
-- [ ] Prva migracija `Pocetna` + primena na Supabase
+  - [x] `Kategorija` (šifarnik), `Proizvod`, `Pakovanje` + `DbSet`-ovi
+  - [ ] `GrupaPotrosnje`, `VrstaPapagaja`, `PodesavanjaShopa`
+  - [ ] `Porudzbina`, `StavkaPorudzbine`, `Podsetnik`, `OdjavaEmail` (mogu i u fazi 3, kad zatrebaju)
+- [x] Prva migracija `Pocetna` + primena na Supabase (tabele `Kategorije`, `Proizvodi`, `Pakovanja`)
 - [ ] Seed: 2 mešavine, 9 pakovanja hrane (tabela ispod), kavezi i oprema u RSD (poštarina `null`), 15 vrsta, 3 grupe potrošnje, `PodesavanjaShopa` (besplatna poštarina isključena)
 - [ ] `GET /api/katalog`, `GET /api/katalog/{slug}`, `GET /api/vrste`
 - [ ] `GET /api/provera` (upit bazi)
-- [ ] CORS (domen sajta + localhost u dev-u), ProblemDetails za greške, Swagger samo u Development-u
+- [x] CORS (domen sajta + localhost u dev-u), Swagger samo u Development-u
+- [ ] ProblemDetails za greške
 
 **Provera:** `dotnet run` → Swagger → `GET /api/katalog` vraća 2 mešavine sa 9 pakovanja, `GET /api/provera` vraća ok.
 
@@ -298,8 +303,11 @@ Napomena: `/wp-content/uploads/*` (stare slike) se ne preusmeravaju. Vraćaju 40
 
 Novac je `int` (RSD). Vreme je `timestamptz` (UTC). Nazivi prate entitete.
 
+**Kategorija**: šifarnik kategorija, da slug i naziv za URL-ove prodavnice žive uz podatke (`hrana`, `kavezi-i-oprema`).
+`Id`, `Slug` (unique), `Naziv`, `Redosled`
+
 **Proizvod**: katalog koji shop prodaje (mešavina hrane, kavez, oprema).
-`Id`, `Slug` (unique), `Naziv`, `Kategorija` (Hrana / Kavez / Oprema), `KratakOpis`, `JeZaAre` (bool), `Aktivan`, `Redosled`
+`Id`, `Slug` (unique), `Naziv`, `KategorijaId` (FK), `KratakOpis`, `JeZaAre` (bool), `Aktivan`, `Redosled`
 
 **Pakovanje**: ono što se stvarno kupuje, sa svojom cenom i poštarinom (za kavez je to jedan „komad“).
 `Id`, `ProizvodId` (FK), `Oznaka` („3,3 kg džak“), `TezinaGrama` (null za kaveze), `CenaRsd`, `PostarinaRsd` (null = potvrđuje se naknadno), `Aktivno`, `Redosled`

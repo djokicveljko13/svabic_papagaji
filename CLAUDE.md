@@ -85,7 +85,7 @@ Format: **šta**, zašto, alternativa.
 │   │   └─ feature-flags.ts   dodaci (kalkulator, lista čekanja)
 │   └─ public/
 └─ api/
-    ├─ Svabic.sln
+    ├─ Svabic.slnx
     ├─ src/Svabic.Api/
     │   ├─ Kontroleri/        tanki kontroleri: validacija → servis → odgovor
     │   ├─ Domen/             entiteti i čiste klase obračuna (KalkulatorKorpe, PravilaPostarine, ...)
@@ -155,8 +155,8 @@ pnpm typecheck        # tsc --noEmit
 **API** (iz root-a):
 ```bash
 dotnet run --project api/src/Svabic.Api          # razvojni server + Swagger
-dotnet build api/Svabic.sln
-dotnet test api/Svabic.sln
+dotnet build api/Svabic.slnx
+dotnet test api/Svabic.slnx
 ```
 
 **Migracije** (alat: `dotnet tool install --global dotnet-ef`):
@@ -168,12 +168,14 @@ dotnet ef migrations script --idempotent --project api/src/Svabic.Api   # SQL za
 
 **Tajne u developmentu:**
 ```bash
-dotnet user-secrets set "ConnectionStrings:Baza" "<supabase pooler connection string>" --project api/src/Svabic.Api
+# Npgsql traži oblik key=value. URI oblik (postgresql://...) koji Supabase prikazuje NE radi.
+dotnet user-secrets set "ConnectionStrings:Baza" "Host=<pooler host>;Port=5432;Database=postgres;Username=postgres.<ref>;Password=<lozinka>;SSL Mode=Require" --project api/src/Svabic.Api
 dotnet user-secrets set "Resend:ApiKljuc" "<kljuc>" --project api/src/Svabic.Api
 ```
 
 ## Način rada
 
+- **Korisnik radi sam, Claude je mentor.** Korisnik sam piše kod, pravi fajlove i kuca komande. Claude objašnjava koncept, daje uputstvo ili primer, pa čeka da korisnik javi da je gotovo. Posle toga sme da pročita fajlove i pokrene `dotnet build` / `git status` radi provere. Claude menja fajlove ili pokreće komande samo kad korisnik to izričito traži za taj konkretan zadatak.
 - **Pitaj pre svakog novog koraka.** Odobrenje prethodnog koraka nije dozvola za sledeći. Predloži sledeći korak i sačekaj potvrdu. Kad je korak prost (git komanda, komanda u terminalu), ponudi da ga korisnik uradi sam uz uputstvo.
 - **Mali koraci.** Posle svakog koraka stani i napiši šta je urađeno i kako da se proveri (komanda, URL, očekivan rezultat).
 - **Objašnjavaj odluke** kratko i jednostavno: šta, zašto, koja je alternativa. Korisnik je junior i uči .NET.

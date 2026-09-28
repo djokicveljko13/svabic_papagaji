@@ -1,0 +1,9 @@
+<Project>
+
+  <!-- Zajednička podešavanja za sve projekte u /api. Pojedinačni .csproj ih ne mora ponavljati. -->
+  <PropertyGroup>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
+</Project>
