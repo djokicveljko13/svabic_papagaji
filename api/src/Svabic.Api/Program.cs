@@ -3,6 +3,12 @@ using Svabic.Api.Podaci;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Lokalna podešavanja (u .gitignore), npr. connection string na poslu
+builder.Configuration.AddJsonFile(
+    $"appsettings.{builder.Environment.EnvironmentName}.local.json",
+    optional: true,
+    reloadOnChange: true);
+
 // Servisi
 builder.Services.AddDbContext<SvabicDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Baza")));
